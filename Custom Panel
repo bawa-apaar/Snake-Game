@@ -1,0 +1,262 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+class MyPanel extends JPanel implements Runnable,KeyListener
+{
+              Thread t1;
+	
+	private ImageIcon ic1,ic2,ic3;
+	private Image ban,head,ball;
+	int  w=600,h=600;
+	int dot_size=20;
+	 int rand_pos=29;
+	int all_dots=900;
+	int x[]=new int[all_dots];
+	int y[]=new int[all_dots];	
+	int ban_x,ban_y;
+	int dots=4;
+	boolean inGame=true;
+	boolean startGame=true;
+	boolean rightbut=true;
+	boolean leftbut=false;
+	boolean upbut=false;
+	boolean downbut=false;		
+	MyPanel()
+	{
+		setFocusable(true);
+		setBackground(Color.black);
+		addKeyListener(this);
+		
+		setImages();
+		initGame();
+	
+	}
+	void  initGame()
+	{
+		
+		for(int p=0; p<dots; p++)
+		{
+			x[p]=120-p*20;
+			y[p]=60;
+		}
+		setPosBanana();
+		t1=new Thread(this);
+		t1.start();	
+	}
+	public void run()
+	{
+		fun();
+	}
+	
+	void fun()
+	{
+		while(true)
+		{	
+			checkBanana();
+			checkcollision();	
+			move();
+			
+			try
+			{
+				Thread.sleep(100);
+			}
+			catch(Exception ee)
+			{
+	
+			}
+			repaint();
+		}
+	}
+	void move()
+	{
+		/*	for (int p =0; p < dots; p++)	
+			 {
+			
+           				       x[(p+1)] = x[p];
+     				       y[(p+1)] = y[p];
+	
+				System.out.println("x[0]"+x[0]);
+				System.out.println("x[1]"+x[1]);
+				System.out.println("x[2]"+x[2]);
+				System.out.println("x[3]"+x[3]);					
+       			 }*/
+
+			 for (int p =dots; p>0; p--)	
+			 {
+           				       x[p] = x[(p-1)];
+     				       y[p] = y[(p-1)];
+	
+				System.out.println("x[0]"+x[0]);
+				System.out.println("x[1]"+x[1]);
+				System.out.println("x[2]"+x[2]);
+				System.out.println("x[3]"+x[3]);					
+       			 }
+	
+		
+       			 if(leftbut) 
+			{
+            				x[0] -= dot_size;
+        			}
+			
+       			 if(rightbut) 
+			{
+				x[0] +=dot_size;
+			}
+
+      			  if(upbut) 
+			{
+          			 	y[0] -= dot_size;
+     			}
+
+       			 if(downbut) 
+			{
+				
+				y[0] +=dot_size;
+			}
+			
+	}
+	private void checkBanana() 
+	{
+		
+	        if ((x[0] == ban_x) && (y[0] == ban_y))
+	       {
+		            dots++;
+			//System.out.println("hello");
+            			setPosBanana();
+        	       }
+    	}
+	void setPosBanana()
+	{
+			System.out.println("setpos");
+			int j=(int)(Math.random()*rand_pos);
+			ban_x=j*dot_size;
+			int k=(int)(Math.random()*rand_pos);
+			ban_y=k*dot_size;
+			//System.out.println(ban_x);
+			//System.out.println(ban_y);
+	}
+	void setImages()
+	{
+		ic1=new ImageIcon("ban.jpg");
+		ic2=new ImageIcon("ball.jpg");
+		ic3=new ImageIcon("mysnake.jpg");
+		
+		ban=ic1.getImage();
+		ball=ic2.getImage();
+		head=ic3.getImage();
+	}
+	private void checkcollision() 
+	{
+		        for (int p = dots; p > 0; p--)
+		       {
+		            if ((p > 4) && (x[0] == x[p]) && (y[0] == y[p])) 
+		           {
+              				  inGame = false;
+            		            }
+        		       }
+		        if (y[0] >= (h-40))
+		       {
+            				inGame = false;
+        		       }
+		        if (y[0] < 0)
+		      {
+	           			 inGame = false;
+        		       }
+		        if (x[0] >= (w-20))
+		       {
+            				inGame = false;
+        		        }
+		        if (x[0] < 0) 
+		       {
+           				 inGame = false;
+        		       }
+        		       if(!inGame) 
+		      {
+           				 t1.stop();
+        		       }
+    	}	
+	public void paintComponent(Graphics gg)
+	{
+		super.paintComponent(gg);	
+	if(inGame)
+	{
+		for(int p=0; p<dots; p++)
+		{
+			if(p==0)
+			{
+			gg.drawImage(head,x[p],y[p],dot_size,dot_size,null);
+			}
+			else
+			{
+			gg.drawImage(ball,x[p],y[p],dot_size,dot_size,null);
+			}
+			gg.drawImage(ban,ban_x,ban_y,dot_size,dot_size,null);
+			
+			
+		}
+	}
+	else
+	{
+		JOptionPane.showMessageDialog(null,"Game Over");
+	}		
+	
+	}	
+
+	public void keyPressed(KeyEvent ee)
+	{
+		
+		
+		//System.out.println(ee.getKeyCode());
+		if(ee.getKeyCode()==40 && (!upbut) )
+		{
+			downbut=true;
+			leftbut=false;
+			rightbut=false;			
+			
+			//System.out.println("40"+downbut);
+		}
+
+		
+		if(ee.getKeyCode()==37 && (!rightbut)) 
+		{
+			
+			upbut=false;
+			downbut=false;
+			leftbut=true;			
+			
+			//System.out.println("40"+downbut);
+		}
+		
+		
+		if(ee.getKeyCode()==38 && (!downbut)) 
+		{
+			
+			upbut=true;
+			
+			leftbut=false;
+			rightbut=false;			
+			
+			//System.out.println("40"+downbut);
+		}
+
+		
+		if(ee.getKeyCode()==39 &&  (!leftbut) )
+		{
+			
+			upbut=false;
+			downbut=false;
+			
+			rightbut=true;			
+			
+			//System.out.println("40"+downbut);
+		}
+	}
+	public void keyReleased(KeyEvent ee)
+	{
+		
+	}
+	public void keyTyped(KeyEvent ee)
+	{
+		
+	}
+}
