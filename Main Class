@@ -1,0 +1,21 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+class SnakeGame extends JFrame
+{
+
+	SnakeGame()
+	{
+		add(new MyPanel());
+		setSize(600,600);
+		//setUndecorated(true);
+		setLocationRelativeTo(null);
+		setVisible(true);
+		
+		
+	}
+	public static void main(String gg[])
+	{
+		new SnakeGame();
+	}
+}
